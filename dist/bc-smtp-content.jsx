@@ -1,12 +1,19 @@
 /* bc-smtp-content.jsx — body of the BC SMTP OAuth2 post.
    Exposes window.BCSmtpContent which renders inside .post-content. */
 
-const Img = ({ src, caption }) => (
-  <figure className="post-figure">
-    <img src={src} alt={caption} loading="lazy" />
-    <figcaption>{caption}</figcaption>
-  </figure>
-);
+const Img = ({ src, caption }) => {
+  const base = src.replace(/\.[^.]+$/, "");
+  return (
+    <figure className="post-figure">
+      <picture>
+        <source type="image/webp" srcSet={`${base}-800.webp 800w, ${base}-1600.webp 1600w`} sizes="(max-width: 800px) 100vw, 800px" />
+        <source type="image/jpeg" srcSet={`${base}-800.jpg 800w, ${base}-1600.jpg 1600w`} sizes="(max-width: 800px) 100vw, 800px" />
+        <img src={`${base}-800.jpg`} alt={caption} loading="lazy" />
+      </picture>
+      <figcaption>{caption}</figcaption>
+    </figure>
+  );
+};
 
 const Code = ({ children, lang = "powershell" }) => {
   const [copied, setCopied] = React.useState(false);
@@ -68,7 +75,7 @@ const Table = ({ rows }) => (
   </div>
 );
 
-const SHOTS = "bc-smtp-screenshots/";
+const SHOTS = "assets/posts/bc-smtp/";
 
 const BCSmtpContent = () => (
   <>
@@ -96,7 +103,7 @@ const BCSmtpContent = () => (
         <li>Sign in with a <strong>Global Administrator</strong> account.</li>
         <li>You'll land on the Azure Portal home page.</li>
       </ol>
-      <Img src={SHOTS + "00.png"} caption="Azure Portal home screen after signing in as Global Administrator." />
+      <Img src={SHOTS + "00"} caption="Azure Portal home screen after signing in as Global Administrator." />
     </Step>
 
     <Step n={2} total={18} section="Azure Portal" title="Navigate to App Registrations">
@@ -105,7 +112,7 @@ const BCSmtpContent = () => (
         <li>Click <strong>Microsoft Entra ID</strong> from the search results.</li>
         <li>In the left sidebar, click <strong>App registrations</strong>.</li>
       </ol>
-      <Img src={SHOTS + "01.png"} caption="Microsoft Entra ID — left sidebar showing App registrations highlighted." />
+      <Img src={SHOTS + "01"} caption="Microsoft Entra ID — left sidebar showing App registrations highlighted." />
     </Step>
 
     <Step n={3} total={18} section="Azure Portal" title="Create a new App Registration">
@@ -116,7 +123,7 @@ const BCSmtpContent = () => (
         <li><strong>Redirect URI:</strong> <em>Web</em> → <code>https://businesscentral.dynamics.com/OAuthLanding.htm</code></li>
         <li>Click <strong>Register</strong>.</li>
       </ol>
-      <Img src={SHOTS + "02.png"} caption="New App Registration form — Name, account type, and Redirect URI filled in." />
+      <Img src={SHOTS + "02"} caption="New App Registration form — Name, account type, and Redirect URI filled in." />
       <Callout kind="warn" title="Save these values now">
         Once registered, the Overview page shows your <strong>Application (Client) ID</strong> and <strong>Directory (Tenant) ID</strong>. Copy both — you'll need them in Sections 2, 3, and 4.
       </Callout>
@@ -125,7 +132,7 @@ const BCSmtpContent = () => (
         ["Application (Client) ID", "Overview page — first field"],
         ["Directory (Tenant) ID", "Overview page — second field"],
       ]}/>
-      <Img src={SHOTS + "03.png"} caption="App registration Overview page — Client ID and Tenant ID highlighted." />
+      <Img src={SHOTS + "03"} caption="App registration Overview page — Client ID and Tenant ID highlighted." />
     </Step>
 
     <Step n={4} total={18} section="Azure Portal" title="Add the SMTP.SendAsApp permission">
@@ -138,7 +145,7 @@ const BCSmtpContent = () => (
         <li>Tick <strong>SMTP.SendAsApp</strong>.</li>
         <li>Click <strong>Add permissions</strong>.</li>
       </ol>
-      <Img src={SHOTS + "04.png"} caption="API permissions — Office 365 Exchange Online > SMTP.SendAsApp (Application) ticked." />
+      <Img src={SHOTS + "04"} caption="API permissions — Office 365 Exchange Online > SMTP.SendAsApp (Application) ticked." />
       <Callout kind="warn" title="The permission shows 'Not granted' — fix it now">
         Adding the permission isn't enough. Without admin consent it will silently fail later in Business Central. Grant it before continuing.
       </Callout>
@@ -147,7 +154,7 @@ const BCSmtpContent = () => (
         <li>Click <strong>Yes</strong> on the confirmation dialog.</li>
         <li>Confirm the Status column shows a green tick: <strong>Granted</strong>.</li>
       </ol>
-      <Img src={SHOTS + "05.png"} caption="API permissions — SMTP.SendAsApp showing green Granted status." />
+      <Img src={SHOTS + "05"} caption="API permissions — SMTP.SendAsApp showing green Granted status." />
     </Step>
 
     <Step n={5} total={18} section="Azure Portal" title="Create a Client Secret">
@@ -160,7 +167,7 @@ const BCSmtpContent = () => (
       <Callout kind="critical" title="Copy the Value field right now">
         Once you navigate away, the <strong>Value</strong> is never shown again. The <strong>Secret ID</strong> is <em>not</em> what you need — you want the <strong>Value</strong> column.
       </Callout>
-      <Img src={SHOTS + "06.png"} caption="Certificates & secrets — newly created secret with Value column highlighted." />
+      <Img src={SHOTS + "06"} caption="Certificates & secrets — newly created secret with Value column highlighted." />
       <Callout kind="success" title="Section 1 complete">
         You now have: Client ID, Tenant ID, Client Secret, and SMTP.SendAsApp granted with admin consent. Keep these values handy.
       </Callout>
@@ -178,7 +185,7 @@ const BCSmtpContent = () => (
         <li>Search for your app name (<code>BC SMTP OAuth Test</code>) and open it.</li>
         <li>From the Overview, copy the <strong>Object ID</strong>.</li>
       </ol>
-      <Img src={SHOTS + "07.png"} caption="Enterprise Applications > your app > Overview — Object ID field highlighted." />
+      <Img src={SHOTS + "07"} caption="Enterprise Applications > your app > Overview — Object ID field highlighted." />
     </Step>
 
     <Step n={7} total={18} section="Exchange Online" title="Connect to Exchange Online via PowerShell">
@@ -272,7 +279,7 @@ $response.access_token`}</Code>
         <li>Type <strong>Email Accounts</strong> and press Enter.</li>
         <li>Click the <strong>Email Accounts</strong> result.</li>
       </ol>
-      <Img src={SHOTS + "08.png"} caption="Business Central — search results showing the Email Accounts page." />
+      <Img src={SHOTS + "08"} caption="Business Central — search results showing the Email Accounts page." />
     </Step>
 
     <Step n={14} total={18} section="Business Central" title="Add a new SMTP account">
@@ -282,7 +289,7 @@ $response.access_token`}</Code>
         <li>Select <strong>SMTP</strong> from the connectors.</li>
         <li>Click <strong>Next</strong>.</li>
       </ol>
-      <Img src={SHOTS + "09.png"} caption="BC Add Email Account wizard — SMTP connector selected." />
+      <Img src={SHOTS + "09"} caption="BC Add Email Account wizard — SMTP connector selected." />
     </Step>
 
     <Step n={15} total={18} section="Business Central" title="Configure SMTP server settings">
@@ -296,7 +303,7 @@ $response.access_token`}</Code>
         ["Sender Name", "Your preferred display name"],
         ["Sender Type", "Specific User"],
       ]}/>
-      <Img src={SHOTS + "10.png"} caption="BC SMTP Account page — all server fields filled in, Authentication set to OAuth 2.0." />
+      <Img src={SHOTS + "10"} caption="BC SMTP Account page — all server fields filled in, Authentication set to OAuth 2.0." />
     </Step>
 
     <Step n={16} total={18} section="Business Central" title="Enter custom OAuth 2.0 credentials">
@@ -313,7 +320,7 @@ $response.access_token`}</Code>
       <Callout kind="note" title="On secure storage">
         Once saved, BC stores the Client ID, Client Secret, and Tenant ID in <strong>isolated storage</strong> — a private store managed exclusively by the <em>Email — SMTP Connector</em> app published by Microsoft. They can only be read by that app, never exposed in plain text, and not visible to other extensions or users.
       </Callout>
-      <Img src={SHOTS + "11.png"} caption="BC SMTP Account — OAuth 2.0 custom credentials entered." />
+      <Img src={SHOTS + "11"} caption="BC SMTP Account — OAuth 2.0 custom credentials entered." />
     </Step>
 
     <Step n={17} total={18} section="Business Central" title="Authenticate and save">
@@ -326,9 +333,9 @@ $response.access_token`}</Code>
       <Callout kind="critical" title="If authentication fails — start over">
         Don't try to edit the failed account. BC stores a corrupted token that <em>can't</em> be repaired. Delete the SMTP account, generate a fresh client secret in Entra (Step 5), and walk back through from Step 14. It sounds drastic; it's the only path that works.
       </Callout>
-      <Img src={SHOTS + "12.png"} caption="Microsoft account picker — select the Global Administrator account." />
-      <Img src={SHOTS + "13.png"} caption="Permissions requested — review and click Accept to grant the app permission to send via SMTP AUTH." />
-      <Img src={SHOTS + "14.png"} caption="BC Email Accounts list — new SMTP account showing as Active." />
+      <Img src={SHOTS + "12"} caption="Microsoft account picker — select the Global Administrator account." />
+      <Img src={SHOTS + "13"} caption="Permissions requested — review and click Accept to grant the app permission to send via SMTP AUTH." />
+      <Img src={SHOTS + "14"} caption="BC Email Accounts list — new SMTP account showing as Active." />
     </Step>
 
     <Step n={18} total={18} section="Business Central" title="Send a test email">
@@ -338,7 +345,7 @@ $response.access_token`}</Code>
         <li>Enter your own address as the recipient and click <strong>Send</strong>.</li>
         <li>Check your inbox.</li>
       </ol>
-      <Img src={SHOTS + "15.png"} caption="BC Send Test Email — success confirmation and email received in inbox." />
+      <Img src={SHOTS + "15"} caption="BC Send Test Email — success confirmation and email received in inbox." />
     </Step>
 
     {/* TROUBLESHOOTING */}

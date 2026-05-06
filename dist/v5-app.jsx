@@ -169,7 +169,7 @@ const ProfileWidget = () => {
       </div>
     </div>
     <p className="profile-bio">
-      Microsoft Dynamics 365 <b>Business Central</b> consultant with a unique blend of technical AL development and UK payroll / HMRC compliance expertise. Three+ years auditing as a semi-qualified <b>chartered accountant</b> means I understand <em>why</em> a solution matters to the business — not just how to build it.
+      AL developer at Dogma Group building Microsoft Dynamics 365 <b>Business Central</b> extensions for UK payroll and finance — HMRC RTI feeds, pension integrations, BACS processing, and more. Three years as a semi-qualified <b>chartered accountant</b> means I bring genuine domain depth alongside the code: I know <em>why</em> the solution matters, not just how to ship it.
     </p>
     <div className="profile-cta-row">
       <a className="btn primary" href="mailto:sudeepstha08@gmail.com">↗ Email me</a>
@@ -319,9 +319,9 @@ const HomePageV5 = ({ onNav }) => (
             t: "Business Central Technical Consultant",
             o: "Dogma Group · Hybrid · Kathmandu",
             d: [
-              "AL development and customisation across the Microsoft Dynamics 365 Business Central ecosystem.",
-              "Designing extensions for payroll and finance workflows; translating fit-gap analysis into deliverable technical specs.",
-              "Working with senior consultants to scope, build, and ship to client environments."
+              "Building and shipping AL extensions end-to-end across multiple live client environments — event subscribers, integration events, API pages, and RDLC reports.",
+              "Deep specialisation in Sirius Payroll × Business Central: HMRC RTI / FPS submissions, NI calculations, SMP/SPP/Alabaster rules, BACS file generation, P32 reporting, and pension scheme integrations.",
+              "Full delivery lifecycle — fit-gap analysis, blueprint documentation, AL customisation, UAT pipeline management, and go-live support — working directly with clients and senior consultants."
             ],
           },
           {
@@ -386,16 +386,28 @@ const HomePageV5 = ({ onNav }) => (
       </R>
       <R delay={120}>
         <div className="skill-cloud">
+          <span className="skill-cat-label">Technical</span>
           {[
-            ["Business Central","xl acc"],["AL Development","xl"],["Sirius Payroll","lg"],["UK Payroll / HMRC","lg"],
-            ["AL Extensions","lg"],["Object Customisation","lg"],["System Integration","lg"],
-            ["Fit-Gap Analysis",""],["Blue Print Documentation",""],["UAT & Cutover",""],
-            ["User Training",""],["Workflow Design",""],
-            ["Statutory Audit",""],["Tax Audit",""],["Indian GAAP",""],["IFRS",""],
-            ["Financial Reporting",""],["Reconciliations",""],["Ledger Scrutiny",""],
-            ["Stakeholder Comms",""],["Requirements Gathering",""],["QA Coordination",""],
-            ["MS SQL",""],["Power BI",""],["Excel (advanced)",""],["Git",""],
-          ].map(([n, c], i) => <span key={i} className={"skill-tag " + c}>{n}</span>)}
+            ["Business Central","xl acc"],["AL Development","xl"],["AL Extensions","lg"],
+            ["Event Architecture","lg"],["REST / OAuth APIs",""],["API Pages",""],
+            ["RDLC Reports",""],["Test Automation",""],["JSON / XML",""],
+            ["MS SQL",""],["Git",""],["Power BI",""],
+          ].map(([n, c], i) => <span key={"t"+i} className={"skill-tag " + c}>{n}</span>)}
+
+          <span className="skill-cat-label">Domain</span>
+          {[
+            ["Sirius Payroll","lg"],["UK Payroll / HMRC","lg"],
+            ["HMRC RTI / FPS",""],["NI / SMP / Alabaster",""],["BACS / P32",""],
+            ["Pension Schemes",""],["Timesheet & Budgeting",""],
+            ["Finance & GL",""],["Dimensions",""],["Indian GAAP / IFRS",""],
+          ].map(([n, c], i) => <span key={"d"+i} className={"skill-tag " + c}>{n}</span>)}
+
+          <span className="skill-cat-label">Delivery</span>
+          {[
+            ["Multi-Client Delivery",""],["Fit-Gap Analysis",""],["Blueprint Documentation",""],
+            ["UAT Pipeline",""],["User Training",""],
+            ["Stakeholder Comms",""],["Requirements Gathering",""],
+          ].map(([n, c], i) => <span key={"dl"+i} className={"skill-tag " + c}>{n}</span>)}
         </div>
       </R>
     </section>

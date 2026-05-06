@@ -643,8 +643,10 @@ const ReferencesWidget = () => {
       {ref
         ? <div style={{opacity: fade ? 1 : 0, transition:"opacity 0.35s ease", marginTop:12, flex:1, display:"flex", flexDirection:"column"}}>
             <p className="ref-preview-quote" style={{flex:1}}>{ref.quote}</p>
-            <div className="ref-preview-name" style={{marginTop:12}}>{ref.name} · {ref.role}</div>
-            <div className="ref-relationship" style={{marginTop:4}}>{ref.company}</div>
+            <div style={{marginTop:14, display:"flex", flexDirection:"column", gap:3}}>
+              <div className="ref-name" style={{fontSize:14}}>{ref.name}</div>
+              <div className="ref-relationship">{ref.role} · {ref.company}</div>
+            </div>
           </div>
         : <p className="ref-empty" style={{marginTop:16}}>No references yet.</p>
       }

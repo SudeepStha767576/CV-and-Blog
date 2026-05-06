@@ -445,20 +445,8 @@ const HomePageV5 = ({ onNav }) => (
       </R>
     </section>
 
-    {/* REFERENCES TEASER */}
-    <section className="section">
-      <R>
-        <div className="section-head">
-          <div>
-            <h2 className="section-title">What people <span className="accent">say</span>.</h2>
-          </div>
-          <a className="section-link" onClick={() => onNav("references")}>View all →</a>
-        </div>
-      </R>
-      <R delay={120}>
-        <ReferencesWidget onNav={onNav} />
-      </R>
-    </section>
+    {/* REFERENCES */}
+    <ReferencesSection onNav={onNav} />
   </main>
 );
 
@@ -631,25 +619,7 @@ const PaletteSwatches = ({ active, onPick }) => (
   </div>
 );
 
-/* ─── REFERENCES WIDGET (home page teaser) ──────────────────────────── */
-const ReferencesWidget = ({ onNav }) => {
-  const refs = (window.REFERENCES_DATA || []).slice(0, 2);
-  return (
-    <div className="ref-preview-list">
-      {refs.length === 0
-        ? <p className="ref-empty">No references yet — be the first to leave one.</p>
-        : refs.map(r => (
-            <div key={r.id} className="ref-preview-item">
-              <div className="ref-preview-quote">{r.quote}</div>
-              <div className="ref-preview-name">{r.name} · {r.role}, {r.company}</div>
-            </div>
-          ))
-      }
-    </div>
-  );
-};
-
-/* ─── REFERENCES PAGE ────────────────────────────────────────────────── */
+/* ─── REFERENCES FULL PAGE ───────────────────────────────────────────── */
 const ReferencesPageV5 = () => {
   const refs = window.REFERENCES_DATA || [];
   return (
@@ -660,7 +630,7 @@ const ReferencesPageV5 = () => {
       </div></R>
       <R delay={100}>
         {refs.length === 0
-          ? <p className="ref-empty" style={{marginTop: 48}}>No references yet.</p>
+          ? <p className="ref-empty" style={{marginTop:48}}>No references yet.</p>
           : <div className="ref-grid">
               {refs.map(r => (
                 <div key={r.id} className="ref-card">
@@ -679,12 +649,14 @@ const ReferencesPageV5 = () => {
   );
 };
 
-/* ─── SECRET REFERENCE SUBMIT FORM ──────────────────────────────────── */
+/* ─── REFERENCES SECTION (home page — list + inline form toggle) ─────── */
 const GITHUB_REPO  = "SudeepStha767576/CV-and-Blog";
 const GITHUB_FILE  = "dist/references-data.js";
 const GITHUB_TOKEN = "YOUR_GITHUB_PAT_HERE"; // fine-grained PAT: contents write on this repo only
 
-const RefSubmitPageV5 = () => {
+const ReferencesSection = ({ onNav }) => {
+  const refs = window.REFERENCES_DATA || [];
+  const [open, setOpen] = React.useState(false);
   const [form, setForm] = React.useState({ name:"", role:"", company:"", relationship:"", quote:"" });
   const [status, setStatus] = React.useState("idle"); // idle | submitting | success | error
   const [errMsg, setErrMsg] = React.useState("");
@@ -698,92 +670,113 @@ const RefSubmitPageV5 = () => {
     }
     setStatus("submitting");
     try {
-      // 1. Fetch current file
       const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
         headers: { Authorization: `Bearer ${GITHUB_TOKEN}`, Accept: "application/vnd.github+json" }
       });
       if (!res.ok) throw new Error("Could not read references file from GitHub.");
       const { content: b64, sha } = await res.json();
-
-      // 2. Decode, parse existing data, append new entry
       const existing = atob(b64.replace(/\n/g,""));
       const match = existing.match(/window\.REFERENCES_DATA\s*=\s*(\[[\s\S]*?\]);/);
       const currentArr = match ? JSON.parse(match[1]) : [];
-      const newEntry = {
+      currentArr.push({
         id: "ref-" + Date.now(),
-        name: form.name.trim(),
-        role: form.role.trim(),
-        company: form.company.trim(),
-        relationship: form.relationship.trim(),
+        name: form.name.trim(), role: form.role.trim(),
+        company: form.company.trim(), relationship: form.relationship.trim(),
         quote: form.quote.trim(),
         date: new Date().toLocaleString("en-GB", { month:"short", year:"numeric" }).toUpperCase()
-      };
-      currentArr.push(newEntry);
-
-      // 3. Build updated file content
-      const newContent = `/* references-data.js — auto-updated by the #ref-submit form via GitHub API */\nwindow.REFERENCES_DATA = ${JSON.stringify(currentArr, null, 2)};\n`;
+      });
+      const newContent = `/* references-data.js — auto-updated by the reference form */\nwindow.REFERENCES_DATA = ${JSON.stringify(currentArr, null, 2)};\n`;
       const encoded = btoa(unescape(encodeURIComponent(newContent)));
-
-      // 4. PUT back to GitHub
       const put = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${GITHUB_TOKEN}`, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
         body: JSON.stringify({ message: `add reference from ${form.name}`, content: encoded, sha })
       });
-      if (!put.ok) throw new Error("Failed to save reference to GitHub.");
+      if (!put.ok) throw new Error("Failed to save. Please try again.");
       setStatus("success");
-      setForm({ name:"", role:"", company:"", relationship:"", quote:"" });
     } catch(err) {
       setErrMsg(err.message || "Something went wrong."); setStatus("error");
     }
   };
 
   return (
-    <main className="shell page-enter">
-      <R><div className="page-hero ref-submit-shell">
-        <h1>Leave a <span className="accent">reference</span>.</h1>
-        <p>Your reference will appear on Sudip's site after a short delay (~1 min).</p>
-      </div></R>
-      <R delay={100}>
-        <div className="ref-submit-shell">
-          {status === "success"
-            ? <div style={{textAlign:"center", padding:"60px 0"}}>
-                <div style={{fontSize:40, marginBottom:16}}>🙏</div>
-                <h2 style={{marginBottom:8}}>Thank you!</h2>
-                <p style={{color:"var(--muted)"}}>Your reference has been saved and will go live shortly.</p>
-              </div>
-            : <form className="ref-form" onSubmit={handleSubmit}>
-                <div className="ref-field">
-                  <label className="ref-label">Full name *</label>
-                  <input className="ref-input" value={form.name} onChange={e => set("name", e.target.value)} placeholder="Jane Doe" />
-                </div>
-                <div className="ref-field">
-                  <label className="ref-label">Job title / role *</label>
-                  <input className="ref-input" value={form.role} onChange={e => set("role", e.target.value)} placeholder="Finance Director" />
-                </div>
-                <div className="ref-field">
-                  <label className="ref-label">Company *</label>
-                  <input className="ref-input" value={form.company} onChange={e => set("company", e.target.value)} placeholder="Acme Ltd" />
-                </div>
-                <div className="ref-field">
-                  <label className="ref-label">Your relationship to Sudip</label>
-                  <input className="ref-input" value={form.relationship} onChange={e => set("relationship", e.target.value)} placeholder="e.g. Client · Dogma Group project" />
-                </div>
-                <div className="ref-field">
-                  <label className="ref-label">Reference message *</label>
-                  <textarea className="ref-textarea" value={form.quote} onChange={e => set("quote", e.target.value)} placeholder="Share your experience working with Sudip…" />
-                </div>
-                <div className="ref-submit-row">
-                  <button className="btn primary" type="submit" disabled={status === "submitting"}>
-                    {status === "submitting" ? "Saving…" : "↗ Submit reference"}
-                  </button>
-                  {status === "error" && <span className="ref-status error">{errMsg}</span>}
-                </div>
-              </form>
-          }
+    <section className="section">
+      <R>
+        <div className="section-head">
+          <div>
+            <h2 className="section-title">What people <span className="accent">say</span>.</h2>
+          </div>
+          <div style={{display:"flex", gap:12, alignItems:"center"}}>
+            {refs.length > 0 && <a className="section-link" onClick={() => onNav("references")}>View all →</a>}
+            <a className="section-link" onClick={() => { setOpen(o => !o); setStatus("idle"); setErrMsg(""); }}>
+              {open ? "Cancel" : "↗ Leave a reference"}
+            </a>
+          </div>
         </div>
       </R>
-    </main>
+
+      {/* Inline submit form — toggles open */}
+      {open && (
+        <R delay={60}>
+          <div className="ref-inline-form">
+            {status === "success"
+              ? <div style={{textAlign:"center", padding:"40px 0"}}>
+                  <div style={{fontSize:36, marginBottom:12}}>🙏</div>
+                  <h3 style={{marginBottom:6}}>Thank you!</h3>
+                  <p style={{color:"var(--muted)", fontSize:14}}>Your reference has been saved and will appear shortly.</p>
+                </div>
+              : <form className="ref-form" onSubmit={handleSubmit}>
+                  <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:12}}>
+                    <div className="ref-field">
+                      <label className="ref-label">Full name *</label>
+                      <input className="ref-input" value={form.name} onChange={e => set("name", e.target.value)} placeholder="Jane Doe" />
+                    </div>
+                    <div className="ref-field">
+                      <label className="ref-label">Job title / role *</label>
+                      <input className="ref-input" value={form.role} onChange={e => set("role", e.target.value)} placeholder="Finance Director" />
+                    </div>
+                    <div className="ref-field">
+                      <label className="ref-label">Company *</label>
+                      <input className="ref-input" value={form.company} onChange={e => set("company", e.target.value)} placeholder="Acme Ltd" />
+                    </div>
+                    <div className="ref-field">
+                      <label className="ref-label">Your relationship to Sudip</label>
+                      <input className="ref-input" value={form.relationship} onChange={e => set("relationship", e.target.value)} placeholder="Client · Dogma Group project" />
+                    </div>
+                  </div>
+                  <div className="ref-field">
+                    <label className="ref-label">Reference message *</label>
+                    <textarea className="ref-textarea" value={form.quote} onChange={e => set("quote", e.target.value)} placeholder="Share your experience working with Sudip…" />
+                  </div>
+                  <div className="ref-submit-row">
+                    <button className="btn primary" type="submit" disabled={status === "submitting"}>
+                      {status === "submitting" ? "Saving…" : "↗ Submit reference"}
+                    </button>
+                    {status === "error" && <span className="ref-status error">{errMsg}</span>}
+                  </div>
+                </form>
+            }
+          </div>
+        </R>
+      )}
+
+      {/* Preview list */}
+      {!open && (
+        <R delay={120}>
+          <div className="ref-preview-list">
+            {refs.length === 0
+              ? <p className="ref-empty">No references yet — be the first to leave one.</p>
+              : refs.slice(0, 2).map(r => (
+                  <div key={r.id} className="ref-preview-item">
+                    <div className="ref-preview-quote">{r.quote}</div>
+                    <div className="ref-preview-name">{r.name} · {r.role}, {r.company}</div>
+                  </div>
+                ))
+            }
+          </div>
+        </R>
+      )}
+    </section>
   );
 };
 
@@ -838,7 +831,7 @@ const AppV5 = () => {
   };
   const isPost = page.startsWith("post:");
   const post = isPost ? POSTS_V5.find(p => p.id === page.split(":")[1]) : null;
-  const activeNav = isPost ? "writing" : (page === "ref-submit" ? "" : page);
+  const activeNav = isPost ? "writing" : page;
 
   return (
     <>
@@ -849,7 +842,6 @@ const AppV5 = () => {
       {page === "home"       && <HomePageV5       onNav={navigate} />}
       {page === "writing"    && <WritingPageV5    onNav={navigate} />}
       {page === "references" && <ReferencesPageV5 />}
-      {page === "ref-submit" && <RefSubmitPageV5  />}
       {page === "contact"    && <ContactPageV5    />}
       {isPost                && <PostPageV5       post={post} onNav={navigate} />}
 

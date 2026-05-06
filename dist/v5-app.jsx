@@ -164,7 +164,7 @@ const ProfileWidget = () => {
       </div>
       <div>
         <h2 className="profile-name">Sudip Shrestha</h2>
-        <div className="profile-role">BC Technical Consultant · UK Payroll · Semi-Qualified CA</div>
+        <div className="profile-role">BC Technical Consultant · UK Payroll Consultant · Semi-Qualified CA</div>
         <div className="profile-loc">Kathmandu, Nepal · Dogma Group · since 2023</div>
       </div>
     </div>

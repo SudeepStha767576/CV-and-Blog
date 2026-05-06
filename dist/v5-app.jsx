@@ -625,8 +625,13 @@ const TWEAK_DEFAULTS_V5 = /*EDITMODE-BEGIN*/{
 // Palettes that flip to a light surface — used to set data-theme so ink/muted vars switch
 const LIGHT_PALETTES = ["daylight", "mist", "mono-lime-light"];
 
+const getPageFromHash = () => {
+  const hash = window.location.hash.replace(/^#/, "");
+  return hash || "home";
+};
+
 const AppV5 = () => {
-  const [page, setPage] = React.useState("home");
+  const [page, setPage] = React.useState(getPageFromHash);
   const [tweaks, setTweak] = window.useTweaks(TWEAK_DEFAULTS_V5);
   React.useEffect(() => {
     const isLight = LIGHT_PALETTES.includes(tweaks.palette);
@@ -638,6 +643,13 @@ const AppV5 = () => {
     if (!isLight && tweaks.lastDark !== tweaks.palette) setTweak("lastDark", tweaks.palette);
   }, [tweaks.palette]);
 
+  // Sync hash → page (browser back/forward)
+  React.useEffect(() => {
+    const onHashChange = () => setPage(getPageFromHash());
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
   const toggleMode = () => {
     const isLight = LIGHT_PALETTES.includes(tweaks.palette);
     if (isLight) {
@@ -648,7 +660,10 @@ const AppV5 = () => {
   };
   React.useEffect(() => { window.scrollTo({top: 0, behavior: "instant"}); }, [page]);
 
-  const navigate = (p) => setPage(p);
+  const navigate = (p) => {
+    window.location.hash = p === "home" ? "" : p;
+    setPage(p);
+  };
   const isPost = page.startsWith("post:");
   const post = isPost ? POSTS_V5.find(p => p.id === page.split(":")[1]) : null;
   const activeNav = isPost ? "writing" : page;

@@ -648,6 +648,82 @@ const ReferencesPageV5 = () => {
   );
 };
 
+/* ─── SECRET SUBMIT PAGE (accessible only via direct URL: #ref-submit) ── */
+const RefSubmitPageV5 = () => {
+  const [form, setForm] = React.useState({ name:"", role:"", company:"", relationship:"", quote:"" });
+  const [status, setStatus] = React.useState("idle");
+  const [errMsg, setErrMsg] = React.useState("");
+  const set = (k, v) => setForm(f => ({...f, [k]: v}));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.name || !form.role || !form.company || !form.quote) {
+      setErrMsg("Please fill in all required fields."); setStatus("error"); return;
+    }
+    setStatus("submitting");
+    try {
+      const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
+        headers: { Authorization: `Bearer ${GITHUB_TOKEN}`, Accept: "application/vnd.github+json" }
+      });
+      if (!res.ok) throw new Error("Could not read references file from GitHub.");
+      const { content: b64, sha } = await res.json();
+      const existing = atob(b64.replace(/\n/g,""));
+      const match = existing.match(/window\.REFERENCES_DATA\s*=\s*(\[[\s\S]*?\]);/);
+      const currentArr = match ? JSON.parse(match[1]) : [];
+      currentArr.push({
+        id: "ref-" + Date.now(),
+        name: form.name.trim(), role: form.role.trim(),
+        company: form.company.trim(), relationship: form.relationship.trim(),
+        quote: form.quote.trim(),
+        date: new Date().toLocaleString("en-GB", { month:"short", year:"numeric" }).toUpperCase()
+      });
+      const newContent = `/* references-data.js — auto-updated by the reference form */\nwindow.REFERENCES_DATA = ${JSON.stringify(currentArr, null, 2)};\n`;
+      const encoded = btoa(unescape(encodeURIComponent(newContent)));
+      const put = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${GITHUB_TOKEN}`, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
+        body: JSON.stringify({ message: `add reference from ${form.name}`, content: encoded, sha })
+      });
+      if (!put.ok) throw new Error("Failed to save. Please try again.");
+      setStatus("success");
+    } catch(err) { setErrMsg(err.message || "Something went wrong."); setStatus("error"); }
+  };
+  return (
+    <main className="shell page-enter">
+      <R><div className="page-hero ref-submit-shell">
+        <h1>Leave a <span className="accent">reference</span>.</h1>
+        <p>Your reference will appear on Sudip's site after a short delay (~1 min).</p>
+      </div></R>
+      <R delay={100}><div className="ref-submit-shell">
+        {status === "success"
+          ? <div style={{textAlign:"center", padding:"60px 0"}}>
+              <div style={{fontSize:40, marginBottom:16}}>🙏</div>
+              <h2 style={{marginBottom:8}}>Thank you!</h2>
+              <p style={{color:"var(--muted)"}}>Your reference has been saved and will go live shortly.</p>
+            </div>
+          : <form className="ref-form" onSubmit={handleSubmit}>
+              <div className="ref-field"><label className="ref-label">Full name *</label>
+                <input className="ref-input" value={form.name} onChange={e => set("name", e.target.value)} placeholder="Jane Doe" /></div>
+              <div className="ref-field"><label className="ref-label">Job title / role *</label>
+                <input className="ref-input" value={form.role} onChange={e => set("role", e.target.value)} placeholder="Finance Director" /></div>
+              <div className="ref-field"><label className="ref-label">Company *</label>
+                <input className="ref-input" value={form.company} onChange={e => set("company", e.target.value)} placeholder="Acme Ltd" /></div>
+              <div className="ref-field"><label className="ref-label">Your relationship to Sudip</label>
+                <input className="ref-input" value={form.relationship} onChange={e => set("relationship", e.target.value)} placeholder="e.g. Client · Dogma Group project" /></div>
+              <div className="ref-field"><label className="ref-label">Reference message *</label>
+                <textarea className="ref-textarea" value={form.quote} onChange={e => set("quote", e.target.value)} placeholder="Share your experience working with Sudip…" /></div>
+              <div className="ref-submit-row">
+                <button className="btn primary" type="submit" disabled={status === "submitting"}>
+                  {status === "submitting" ? "Saving…" : "↗ Submit reference"}
+                </button>
+                {status === "error" && <span className="ref-status error">{errMsg}</span>}
+              </div>
+            </form>
+        }
+      </div></R>
+    </main>
+  );
+};
+
 /* ─── REFERENCES SECTION (home page — list + inline form toggle) ─────── */
 const GITHUB_REPO  = "SudeepStha767576/CV-and-Blog";
 const GITHUB_FILE  = "dist/references-data.js";
@@ -706,10 +782,6 @@ const ReferencesSection = ({ onNav }) => {
             <h2 className="section-title">What people <span className="accent">say</span>.</h2>
           </div>
           <div style={{display:"flex", gap:12, alignItems:"center"}}>
-            {refs.length > 0 && <a className="section-link" onClick={() => onNav("references")}>View all →</a>}
-            <a className="section-link" onClick={() => { setOpen(o => !o); setStatus("idle"); setErrMsg(""); }}>
-              {open ? "Cancel" : "↗ Leave a reference"}
-            </a>
           </div>
         </div>
       </R>
@@ -839,9 +911,10 @@ const AppV5 = () => {
       <StatusPill palette={tweaks.palette} onToggleMode={toggleMode} />
 
       {(page === "home" || page === "references") && <HomePageV5 onNav={navigate} />}
-      {page === "writing" && <WritingPageV5 onNav={navigate} />}
-      {page === "contact" && <ContactPageV5 />}
-      {isPost             && <PostPageV5    post={post} onNav={navigate} />}
+      {page === "writing"    && <WritingPageV5 onNav={navigate} />}
+      {page === "contact"    && <ContactPageV5 />}
+      {page === "ref-submit" && <RefSubmitPageV5 />}
+      {isPost                && <PostPageV5 post={post} onNav={navigate} />}
 
       <window.TweaksPanel title="Tweaks">
         <window.TweakSection label="Color palette">

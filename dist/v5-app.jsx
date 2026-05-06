@@ -70,10 +70,9 @@ const Background = () => (
 /* Side dock nav */
 const Dock = ({ active, onNav }) => {
   const items = [
-    { id:"home",       label:"Home",    icon:(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h14V10"/></svg>) },
-    { id:"writing",    label:"Writing", icon:(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h12v16H4z"/><path d="M16 4l4 4v12h-4"/><path d="M8 9h4M8 13h4"/></svg>) },
-    { id:"references", label:"Refs",    icon:(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>) },
-    { id:"contact",    label:"Contact", icon:(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 7 9-7"/></svg>) },
+    { id:"home",    label:"Home",    icon:(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h14V10"/></svg>) },
+    { id:"writing", label:"Writing", icon:(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h12v16H4z"/><path d="M16 4l4 4v12h-4"/><path d="M8 9h4M8 13h4"/></svg>) },
+    { id:"contact", label:"Contact", icon:(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 7 9-7"/></svg>) },
   ];
   return (
     <nav className="dock">
@@ -839,11 +838,10 @@ const AppV5 = () => {
       <Dock active={activeNav} onNav={navigate} />
       <StatusPill palette={tweaks.palette} onToggleMode={toggleMode} />
 
-      {page === "home"       && <HomePageV5       onNav={navigate} />}
-      {page === "writing"    && <WritingPageV5    onNav={navigate} />}
-      {page === "references" && <ReferencesPageV5 />}
-      {page === "contact"    && <ContactPageV5    />}
-      {isPost                && <PostPageV5       post={post} onNav={navigate} />}
+      {(page === "home" || page === "references") && <HomePageV5 onNav={navigate} />}
+      {page === "writing" && <WritingPageV5 onNav={navigate} />}
+      {page === "contact" && <ContactPageV5 />}
+      {isPost             && <PostPageV5    post={post} onNav={navigate} />}
 
       <window.TweaksPanel title="Tweaks">
         <window.TweakSection label="Color palette">

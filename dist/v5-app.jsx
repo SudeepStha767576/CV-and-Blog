@@ -319,9 +319,12 @@ const HomePageV5 = ({ onNav }) => (
             t: "Business Central Technical Consultant",
             o: "Dogma Group · Hybrid · Kathmandu",
             d: [
-              "Building and shipping AL extensions end-to-end across multiple live client environments — event subscribers, integration events, API pages, and RDLC reports.",
-              "Deep specialisation in Sirius Payroll × Business Central: HMRC RTI / FPS submissions, NI calculations, SMP/SPP/Alabaster rules, BACS file generation, P32 reporting, and pension scheme integrations.",
-              "Full delivery lifecycle — fit-gap analysis, blueprint documentation, AL customisation, UAT pipeline management, and go-live support — working directly with clients and senior consultants."
+              "Architect and ship full AL extension suites across 25+ versioned releases in live multi-client BC environments — Codeunits, Tables, Pages, APIs, Enums, PermissionSets, and RDLC reports with install/upgrade lifecycle management.",
+              "Lead UK statutory payroll engineering within Sirius Payroll × BC — HMRC RTI / FPS / EPS, NI Class 1 / 1A / directors, SMP / SPP / SAP / Alabaster ruling, Student Loan Plans 1–5, BACS file generation, P32 multi-period reporting, and HMRC tax code resolution.",
+              "Design event-driven integration architecture using IntegrationEvent publisher / subscriber patterns, IsHandled guard pattern, and Subscriber + Helper codeunit separation — enabling clean, upgrade-safe extension design.",
+              "Build and maintain BC REST API pages with HttpClient, JSON handling, and OAuth token management, integrating with Dataverse-linked entities and CDS integration tables.",
+              "Deliver test automation using Subtype=Test codeunits with full BDD structure (SCENARIO / GIVEN / WHEN / THEN), ModalPageHandler, LibraryVariableStorage, RecordRef / FieldRef, and asserterror patterns.",
+              "Own the full QA → UAT → Production delivery pipeline — fit-gap analysis, blueprint documentation, PermissionSet governance, multi-tenant deployment, and go-live support across concurrent client engagements."
             ],
           },
           {

@@ -617,20 +617,35 @@ const PaletteSwatches = ({ active, onPick }) => (
   </div>
 );
 
-/* ─── REFERENCES WIDGET (dashboard) ─────────────────────────────────── */
+/* ─── REFERENCES WIDGET (dashboard — auto-rotates) ──────────────────── */
 const ReferencesWidget = () => {
   const refs = window.REFERENCES_DATA || [];
-  const latest = refs[refs.length - 1];
+  const [idx, setIdx] = React.useState(0);
+  const [fade, setFade] = React.useState(true);
+  React.useEffect(() => {
+    if (refs.length <= 1) return;
+    const t = setInterval(() => {
+      setFade(false);
+      setTimeout(() => {
+        setIdx(i => (i + 1) % refs.length);
+        setFade(true);
+      }, 350);
+    }, 5000);
+    return () => clearInterval(t);
+  }, [refs.length]);
+  const ref = refs[idx];
   return (
     <Tilt className="widget refs" strength={3}>
-      <div className="widget-eyebrow"><span>References</span></div>
-      {latest
-        ? <>
-            <p className="ref-preview-quote" style={{marginTop:12, flex:1}}>{latest.quote}</p>
-            <div className="ref-preview-name" style={{marginTop:12}}>{latest.name} · {latest.role}</div>
-            <div className="ref-relationship" style={{marginTop:4}}>{latest.company}</div>
-            {refs.length > 1 && <div style={{marginTop:16, fontFamily:"var(--font-mono)", fontSize:10, color:"var(--muted)", textTransform:"uppercase", letterSpacing:"0.05em"}}>+{refs.length - 1} more</div>}
-          </>
+      <div className="widget-eyebrow">
+        <span>References</span>
+        {refs.length > 1 && <span style={{fontFamily:"var(--font-mono)", fontSize:10, color:"var(--muted)"}}>{idx + 1} / {refs.length}</span>}
+      </div>
+      {ref
+        ? <div style={{opacity: fade ? 1 : 0, transition:"opacity 0.35s ease", marginTop:12, flex:1, display:"flex", flexDirection:"column"}}>
+            <p className="ref-preview-quote" style={{flex:1}}>{ref.quote}</p>
+            <div className="ref-preview-name" style={{marginTop:12}}>{ref.name} · {ref.role}</div>
+            <div className="ref-relationship" style={{marginTop:4}}>{ref.company}</div>
+          </div>
         : <p className="ref-empty" style={{marginTop:16}}>No references yet.</p>
       }
     </Tilt>

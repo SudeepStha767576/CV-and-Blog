@@ -272,10 +272,11 @@ const PostCard = ({ post, onNav }) => (
 /* HOME — also doubles as CV */
 const HomePageV5 = ({ onNav }) => (
   <main className="shell page-enter">
-    <R><div className="dash dash-3">
+    <R><div className="dash dash-4">
       <ProfileWidget />
       <ClockWidget />
       <StatsWidget />
+      <ReferencesWidget />
     </div></R>
 
     {/* ABOUT — long-form bio */}
@@ -444,8 +445,6 @@ const HomePageV5 = ({ onNav }) => (
       </R>
     </section>
 
-    {/* REFERENCES */}
-    <ReferencesSection onNav={onNav} />
   </main>
 );
 
@@ -617,6 +616,26 @@ const PaletteSwatches = ({ active, onPick }) => (
     ))}
   </div>
 );
+
+/* ─── REFERENCES WIDGET (dashboard) ─────────────────────────────────── */
+const ReferencesWidget = () => {
+  const refs = window.REFERENCES_DATA || [];
+  const latest = refs[refs.length - 1];
+  return (
+    <Tilt className="widget refs" strength={3}>
+      <div className="widget-eyebrow"><span>References</span></div>
+      {latest
+        ? <>
+            <p className="ref-preview-quote" style={{marginTop:12, flex:1}}>{latest.quote}</p>
+            <div className="ref-preview-name" style={{marginTop:12}}>{latest.name} · {latest.role}</div>
+            <div className="ref-relationship" style={{marginTop:4}}>{latest.company}</div>
+            {refs.length > 1 && <div style={{marginTop:16, fontFamily:"var(--font-mono)", fontSize:10, color:"var(--muted)", textTransform:"uppercase", letterSpacing:"0.05em"}}>+{refs.length - 1} more</div>}
+          </>
+        : <p className="ref-empty" style={{marginTop:16}}>No references yet.</p>
+      }
+    </Tilt>
+  );
+};
 
 /* ─── REFERENCES FULL PAGE ───────────────────────────────────────────── */
 const ReferencesPageV5 = () => {

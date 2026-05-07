@@ -8,5 +8,14 @@ window.REFERENCES_DATA = [
     "relationship": "",
     "quote": "Test",
     "date": "MAY 2026"
+  },
+  {
+    "id": "ref-1778119100004",
+    "name": "Test2",
+    "role": "Test2",
+    "company": "Dogma",
+    "relationship": "",
+    "quote": "Test2",
+    "date": "MAY 2026"
   }
 ];

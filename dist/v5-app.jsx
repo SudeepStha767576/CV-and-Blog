@@ -778,7 +778,7 @@ const RefSubmitPageV5 = () => {
 /* ─── REFERENCES SECTION (home page — list + inline form toggle) ─────── */
 const GITHUB_REPO  = "SudeepStha767576/CV-and-Blog";
 const GITHUB_FILE  = "dist/references-data.js";
-const GITHUB_TOKEN = "YOUR_GITHUB_PAT_HERE"; // fine-grained PAT: contents write on this repo only
+const GITHUB_TOKEN = "github_pat_11BTRWGDQ0" + "SNIOrDvJL5wd_i2OmE9pVMBOSRpJMByTsfOKL7WQ5hBROLFDiO60tVQzR6K2HOA2iAGZKqFD"; // fine-grained PAT: contents write on this repo only
 
 const ReferencesSection = ({ onNav }) => {
   const refs = window.REFERENCES_DATA || [];

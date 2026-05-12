@@ -843,7 +843,7 @@ const GITHUB_TOKEN = "github_pat_11BTRWGDQ0" + "SNIOrDvJL5wd_i2OmE9pVMBOSRpJMByT
 
 /* EmailJS — fine-grained: only sends to Sudip's inbox, public key is safe client-side */
 const EJS_SERVICE  = "service_txzgpck";
-const EJS_TEMPLATE = "template_mz1a2cl";
+const EJS_TEMPLATE = "template_2kt3mvb";
 const EJS_KEY      = "7Qbf1PltqespMNeh3";
 
 const sendOtpEmail = (otp, refName, refRole, refCompany) =>
@@ -855,12 +855,11 @@ const sendOtpEmail = (otp, refName, refRole, refCompany) =>
       template_id:     EJS_TEMPLATE,
       user_id:         EJS_KEY,
       template_params: {
-        otp,
+        passcode:    otp,
+        time:        new Date(Date.now() + 10*60000).toLocaleTimeString("en-GB", { hour:"2-digit", minute:"2-digit" }),
         ref_name:    refName,
         ref_role:    refRole,
-        ref_company: refCompany,
-        to_email:    "sudeepstha08@gmail.com",
-        to_name:     "Sudip"
+        ref_company: refCompany
       }
     })
   });

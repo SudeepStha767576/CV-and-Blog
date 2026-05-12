@@ -854,7 +854,14 @@ const sendOtpEmail = (otp, refName, refRole, refCompany) =>
       service_id:      EJS_SERVICE,
       template_id:     EJS_TEMPLATE,
       user_id:         EJS_KEY,
-      template_params: { otp, ref_name: refName, ref_role: refRole, ref_company: refCompany }
+      template_params: {
+        otp,
+        ref_name:    refName,
+        ref_role:    refRole,
+        ref_company: refCompany,
+        to_email:    "sudeepstha08@gmail.com",
+        to_name:     "Sudip"
+      }
     })
   });
 

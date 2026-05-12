@@ -842,9 +842,9 @@ const GITHUB_FILE  = "dist/references-data.js";
 const GITHUB_TOKEN = "github_pat_11BTRWGDQ0" + "SNIOrDvJL5wd_i2OmE9pVMBOSRpJMByTsfOKL7WQ5hBROLFDiO60tVQzR6K2HOA2iAGZKqFD";
 
 /* EmailJS — fine-grained: only sends to Sudip's inbox, public key is safe client-side */
-const EJS_SERVICE  = "YOUR_SERVICE_ID";   // e.g. service_abc123
-const EJS_TEMPLATE = "YOUR_TEMPLATE_ID";  // e.g. template_xyz789
-const EJS_KEY      = "YOUR_PUBLIC_KEY";   // e.g. abcDEF123456
+const EJS_SERVICE  = "service_txzgpck";
+const EJS_TEMPLATE = "template_mz1a2cl";
+const EJS_KEY      = "7Qbf1PltqespMNeh3";
 
 const sendOtpEmail = (otp, refName, refRole, refCompany) =>
   fetch("https://api.emailjs.com/api/v1.0/email/send", {

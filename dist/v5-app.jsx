@@ -701,16 +701,36 @@ const ReferencesPageV5 = () => {
 
 /* ─── SECRET SUBMIT PAGE (accessible only via direct URL: #ref-submit) ── */
 const RefSubmitPageV5 = () => {
-  const [form, setForm] = React.useState({ name:"", role:"", company:"", relationship:"", quote:"" });
-  const [status, setStatus] = React.useState("idle");
-  const [errMsg, setErrMsg] = React.useState("");
+  const [form, setForm]       = React.useState({ name:"", role:"", company:"", relationship:"", quote:"" });
+  const [step, setStep]       = React.useState("form"); // form | otp-sending | otp | posting | done
+  const [otpSent, setOtpSent] = React.useState("");
+  const [otpInput, setOtpInput] = React.useState("");
+  const [errMsg, setErrMsg]   = React.useState("");
   const set = (k, v) => setForm(f => ({...f, [k]: v}));
+
+  /* Step 1 — validate, generate OTP, email it */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.role || !form.company || !form.quote) {
-      setErrMsg("Please fill in all required fields."); setStatus("error"); return;
+      setErrMsg("Please fill in all required fields."); return;
     }
-    setStatus("submitting");
+    setErrMsg(""); setStep("otp-sending");
+    try {
+      const otp = String(Math.floor(100000 + Math.random() * 900000));
+      await sendOtpEmail(otp, form.name, form.role, form.company);
+      setOtpSent(otp); setStep("otp");
+    } catch(err) {
+      setErrMsg("Could not send OTP. Please try again."); setStep("form");
+    }
+  };
+
+  /* Step 2 — verify OTP, post to GitHub */
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    if (otpInput.trim() !== otpSent) {
+      setErrMsg("Incorrect OTP. Please check your email and try again."); return;
+    }
+    setErrMsg(""); setStep("posting");
     try {
       const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
         headers: { Authorization: `Bearer ${GITHUB_TOKEN}`, Accept: "application/vnd.github+json" }
@@ -735,9 +755,10 @@ const RefSubmitPageV5 = () => {
         body: JSON.stringify({ message: `add reference from ${form.name}`, content: encoded, sha })
       });
       if (!put.ok) throw new Error("Failed to save. Please try again.");
-      setStatus("success");
-    } catch(err) { setErrMsg(err.message || "Something went wrong."); setStatus("error"); }
+      setStep("done");
+    } catch(err) { setErrMsg(err.message || "Something went wrong."); setStep("otp"); }
   };
+
   return (
     <main className="shell page-enter">
       <R><div className="page-hero ref-submit-shell">
@@ -745,31 +766,71 @@ const RefSubmitPageV5 = () => {
         <p>Your reference will appear on Sudip's site after a short delay (~1 min).</p>
       </div></R>
       <R delay={100}><div className="ref-submit-shell">
-        {status === "success"
-          ? <div style={{textAlign:"center", padding:"60px 0"}}>
-              <div style={{fontSize:40, marginBottom:16}}>🙏</div>
-              <h2 style={{marginBottom:8}}>Thank you!</h2>
-              <p style={{color:"var(--muted)"}}>Your reference has been saved and will go live shortly.</p>
+
+        {/* ── Done ── */}
+        {step === "done" && (
+          <div style={{textAlign:"center", padding:"60px 0"}}>
+            <div style={{fontSize:40, marginBottom:16}}>🙏</div>
+            <h2 style={{marginBottom:8}}>Thank you!</h2>
+            <p style={{color:"var(--muted)"}}>Your reference has been saved and will go live shortly.</p>
+          </div>
+        )}
+
+        {/* ── OTP step ── */}
+        {(step === "otp" || step === "posting") && (
+          <form className="ref-form" onSubmit={handleVerify}>
+            <div style={{textAlign:"center", paddingBottom:24}}>
+              <div style={{fontSize:36, marginBottom:10}}>📧</div>
+              <p style={{fontWeight:600, fontSize:17, marginBottom:4}}>OTP sent to Sudip</p>
+              <p style={{color:"var(--muted)", fontSize:14}}>Ask Sudip to check his email and enter the 6-digit approval code.</p>
             </div>
-          : <form className="ref-form" onSubmit={handleSubmit}>
-              <div className="ref-field"><label className="ref-label">Full name *</label>
-                <input className="ref-input" value={form.name} onChange={e => set("name", e.target.value)} placeholder="Jane Doe" /></div>
-              <div className="ref-field"><label className="ref-label">Job title / role *</label>
-                <input className="ref-input" value={form.role} onChange={e => set("role", e.target.value)} placeholder="Finance Director" /></div>
-              <div className="ref-field"><label className="ref-label">Company *</label>
-                <input className="ref-input" value={form.company} onChange={e => set("company", e.target.value)} placeholder="Acme Ltd" /></div>
-              <div className="ref-field"><label className="ref-label">Your relationship to Sudip</label>
-                <input className="ref-input" value={form.relationship} onChange={e => set("relationship", e.target.value)} placeholder="e.g. Client · Dogma Group project" /></div>
-              <div className="ref-field"><label className="ref-label">Reference message *</label>
-                <textarea className="ref-textarea" value={form.quote} onChange={e => set("quote", e.target.value)} placeholder="Share your experience working with Sudip…" /></div>
-              <div className="ref-submit-row">
-                <button className="btn primary" type="submit" disabled={status === "submitting"}>
-                  {status === "submitting" ? "Saving…" : "↗ Submit reference"}
-                </button>
-                {status === "error" && <span className="ref-status error">{errMsg}</span>}
-              </div>
-            </form>
-        }
+            <div className="ref-field" style={{maxWidth:240, margin:"0 auto"}}>
+              <label className="ref-label">Enter OTP *</label>
+              <input
+                className="ref-input"
+                value={otpInput}
+                onChange={e => setOtpInput(e.target.value)}
+                placeholder="123456"
+                maxLength={6}
+                inputMode="numeric"
+                autoFocus
+                style={{textAlign:"center", letterSpacing:"0.3em", fontSize:22}}
+              />
+            </div>
+            <div className="ref-submit-row" style={{justifyContent:"center", marginTop:20, gap:10}}>
+              <button className="btn primary" type="submit" disabled={step === "posting"}>
+                {step === "posting" ? "Posting…" : "✓ Verify & Post"}
+              </button>
+              <button className="btn" type="button" onClick={() => { setStep("form"); setOtpInput(""); setErrMsg(""); }}>
+                ← Back
+              </button>
+            </div>
+            {errMsg && <p style={{color:"var(--error, #ff5555)", fontSize:13, textAlign:"center", marginTop:10}}>{errMsg}</p>}
+          </form>
+        )}
+
+        {/* ── Main form ── */}
+        {(step === "form" || step === "otp-sending") && (
+          <form className="ref-form" onSubmit={handleSubmit}>
+            <div className="ref-field"><label className="ref-label">Full name *</label>
+              <input className="ref-input" value={form.name} onChange={e => set("name", e.target.value)} placeholder="Jane Doe" /></div>
+            <div className="ref-field"><label className="ref-label">Job title / role *</label>
+              <input className="ref-input" value={form.role} onChange={e => set("role", e.target.value)} placeholder="Finance Director" /></div>
+            <div className="ref-field"><label className="ref-label">Company *</label>
+              <input className="ref-input" value={form.company} onChange={e => set("company", e.target.value)} placeholder="Acme Ltd" /></div>
+            <div className="ref-field"><label className="ref-label">Your relationship to Sudip</label>
+              <input className="ref-input" value={form.relationship} onChange={e => set("relationship", e.target.value)} placeholder="e.g. Client · Dogma Group project" /></div>
+            <div className="ref-field"><label className="ref-label">Reference message *</label>
+              <textarea className="ref-textarea" value={form.quote} onChange={e => set("quote", e.target.value)} placeholder="Share your experience working with Sudip…" /></div>
+            <div className="ref-submit-row">
+              <button className="btn primary" type="submit" disabled={step === "otp-sending"}>
+                {step === "otp-sending" ? "Sending OTP…" : "↗ Submit reference"}
+              </button>
+              {errMsg && <span className="ref-status error">{errMsg}</span>}
+            </div>
+          </form>
+        )}
+
       </div></R>
     </main>
   );
@@ -778,23 +839,62 @@ const RefSubmitPageV5 = () => {
 /* ─── REFERENCES SECTION (home page — list + inline form toggle) ─────── */
 const GITHUB_REPO  = "SudeepStha767576/CV-and-Blog";
 const GITHUB_FILE  = "dist/references-data.js";
-const GITHUB_TOKEN = "github_pat_11BTRWGDQ0" + "SNIOrDvJL5wd_i2OmE9pVMBOSRpJMByTsfOKL7WQ5hBROLFDiO60tVQzR6K2HOA2iAGZKqFD"; // fine-grained PAT: contents write on this repo only
+const GITHUB_TOKEN = "github_pat_11BTRWGDQ0" + "SNIOrDvJL5wd_i2OmE9pVMBOSRpJMByTsfOKL7WQ5hBROLFDiO60tVQzR6K2HOA2iAGZKqFD";
+
+/* EmailJS — fine-grained: only sends to Sudip's inbox, public key is safe client-side */
+const EJS_SERVICE  = "YOUR_SERVICE_ID";   // e.g. service_abc123
+const EJS_TEMPLATE = "YOUR_TEMPLATE_ID";  // e.g. template_xyz789
+const EJS_KEY      = "YOUR_PUBLIC_KEY";   // e.g. abcDEF123456
+
+const sendOtpEmail = (otp, refName, refRole, refCompany) =>
+  fetch("https://api.emailjs.com/api/v1.0/email/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      service_id:      EJS_SERVICE,
+      template_id:     EJS_TEMPLATE,
+      user_id:         EJS_KEY,
+      template_params: { otp, ref_name: refName, ref_role: refRole, ref_company: refCompany }
+    })
+  });
 
 const ReferencesSection = ({ onNav }) => {
   const refs = window.REFERENCES_DATA || [];
   const [open, setOpen] = React.useState(false);
   const [form, setForm] = React.useState({ name:"", role:"", company:"", relationship:"", quote:"" });
-  const [status, setStatus] = React.useState("idle"); // idle | submitting | success | error
+  const [step, setStep]     = React.useState("form");  // form | otp | posting | done
+  const [otpSent, setOtpSent]   = React.useState("");
+  const [otpInput, setOtpInput] = React.useState("");
   const [errMsg, setErrMsg] = React.useState("");
 
   const set = (k, v) => setForm(f => ({...f, [k]: v}));
 
+  /* Step 1 — validate form, generate OTP, email it */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.role || !form.company || !form.quote) {
-      setErrMsg("Please fill in all required fields."); setStatus("error"); return;
+      setErrMsg("Please fill in all required fields."); return;
     }
-    setStatus("submitting");
+    setErrMsg("");
+    setStep("otp-sending");
+    try {
+      const otp = String(Math.floor(100000 + Math.random() * 900000));
+      await sendOtpEmail(otp, form.name, form.role, form.company);
+      setOtpSent(otp);
+      setStep("otp");
+    } catch(err) {
+      setErrMsg("Could not send OTP. Please try again."); setStep("form");
+    }
+  };
+
+  /* Step 2 — verify OTP, then post to GitHub */
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    if (otpInput.trim() !== otpSent) {
+      setErrMsg("Incorrect OTP. Please check your email and try again."); return;
+    }
+    setErrMsg("");
+    setStep("posting");
     try {
       const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
         headers: { Authorization: `Bearer ${GITHUB_TOKEN}`, Accept: "application/vnd.github+json" }
@@ -819,9 +919,9 @@ const ReferencesSection = ({ onNav }) => {
         body: JSON.stringify({ message: `add reference from ${form.name}`, content: encoded, sha })
       });
       if (!put.ok) throw new Error("Failed to save. Please try again.");
-      setStatus("success");
+      setStep("done");
     } catch(err) {
-      setErrMsg(err.message || "Something went wrong."); setStatus("error");
+      setErrMsg(err.message || "Something went wrong."); setStep("otp");
     }
   };
 
@@ -841,13 +941,52 @@ const ReferencesSection = ({ onNav }) => {
       {open && (
         <R delay={60}>
           <div className="ref-inline-form">
-            {status === "success"
-              ? <div style={{textAlign:"center", padding:"40px 0"}}>
-                  <div style={{fontSize:36, marginBottom:12}}>🙏</div>
-                  <h3 style={{marginBottom:6}}>Thank you!</h3>
-                  <p style={{color:"var(--muted)", fontSize:14}}>Your reference has been saved and will appear shortly.</p>
+
+            {/* ── Success ── */}
+            {step === "done" && (
+              <div style={{textAlign:"center", padding:"40px 0"}}>
+                <div style={{fontSize:36, marginBottom:12}}>🙏</div>
+                <h3 style={{marginBottom:6}}>Thank you!</h3>
+                <p style={{color:"var(--muted)", fontSize:14}}>Your reference has been saved and will appear shortly.</p>
+              </div>
+            )}
+
+            {/* ── OTP verification step ── */}
+            {(step === "otp" || step === "posting") && (
+              <form className="ref-form" onSubmit={handleVerify}>
+                <div style={{textAlign:"center", paddingBottom:20}}>
+                  <div style={{fontSize:28, marginBottom:8}}>📧</div>
+                  <p style={{fontWeight:600, marginBottom:4}}>OTP sent to Sudip</p>
+                  <p style={{color:"var(--muted)", fontSize:13}}>Check your email and enter the 6-digit code to approve this reference.</p>
                 </div>
-              : <form className="ref-form" onSubmit={handleSubmit}>
+                <div className="ref-field" style={{maxWidth:220, margin:"0 auto"}}>
+                  <label className="ref-label">Enter OTP *</label>
+                  <input
+                    className="ref-input"
+                    value={otpInput}
+                    onChange={e => setOtpInput(e.target.value)}
+                    placeholder="123456"
+                    maxLength={6}
+                    inputMode="numeric"
+                    autoFocus
+                    style={{textAlign:"center", letterSpacing:"0.3em", fontSize:20}}
+                  />
+                </div>
+                <div className="ref-submit-row" style={{justifyContent:"center", marginTop:16}}>
+                  <button className="btn primary" type="submit" disabled={step === "posting"}>
+                    {step === "posting" ? "Posting…" : "✓ Verify & Post"}
+                  </button>
+                  <button className="btn" type="button" onClick={() => { setStep("form"); setOtpInput(""); setErrMsg(""); }}>
+                    ← Back
+                  </button>
+                </div>
+                {errMsg && <p style={{color:"var(--error, #ff5555)", fontSize:13, textAlign:"center", marginTop:8}}>{errMsg}</p>}
+              </form>
+            )}
+
+            {/* ── Reference form ── */}
+            {(step === "form" || step === "otp-sending") && (
+              <form className="ref-form" onSubmit={handleSubmit}>
                   <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:12}}>
                     <div className="ref-field">
                       <label className="ref-label">Full name *</label>
@@ -871,13 +1010,14 @@ const ReferencesSection = ({ onNav }) => {
                     <textarea className="ref-textarea" value={form.quote} onChange={e => set("quote", e.target.value)} placeholder="Share your experience working with Sudip…" />
                   </div>
                   <div className="ref-submit-row">
-                    <button className="btn primary" type="submit" disabled={status === "submitting"}>
-                      {status === "submitting" ? "Saving…" : "↗ Submit reference"}
+                    <button className="btn primary" type="submit" disabled={step === "otp-sending"}>
+                      {step === "otp-sending" ? "Sending OTP…" : "↗ Submit reference"}
                     </button>
-                    {status === "error" && <span className="ref-status error">{errMsg}</span>}
+                    {errMsg && <span className="ref-status error">{errMsg}</span>}
                   </div>
                 </form>
-            }
+            )}
+
           </div>
         </R>
       )}

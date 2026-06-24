@@ -1060,7 +1060,7 @@ const LIGHT_PALETTES = ["daylight", "mist", "mono-lime-light"];
 
 const getPageFromHash = () => {
   const hash = window.location.hash.replace(/^#/, "");
-  return hash || "home";
+  return hash || window.__INITIAL_PAGE__ || "home";
 };
 
 const AppV5 = () => {
@@ -1095,7 +1095,7 @@ const AppV5 = () => {
       if (p) {
         title = `${p.title} — ${BASE}`;
         desc = p.summary;
-        canonical = `${SITE}/#post:${postId}`;
+        canonical = `${SITE}/posts/${postId}/`;
       }
     } else if (page === "writing") {
       title = `Writing — ${BASE}`;

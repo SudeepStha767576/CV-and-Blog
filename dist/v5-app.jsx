@@ -174,7 +174,7 @@ const ProfileWidget = () => {
     <div className="profile-cta-row">
       <a className="btn primary" href="mailto:sudeepstha08@gmail.com">↗ Email me</a>
       <a className="btn" href="https://www.linkedin.com/in/sudip-shrestha7675/" target="_blank" rel="noopener">@ LinkedIn</a>
-      <a className="btn" href="tel:+9779828733265">↗ Call</a>
+      <a className="btn" href="https://wa.me/9779828733265" target="_blank" rel="noopener">↗ WhatsApp</a>
     </div>
   </Tilt>
   );
@@ -558,11 +558,10 @@ const ContactPageV5 = () => (
         <Tilt className="widget" strength={3}>
           <div className="widget-eyebrow"><span>Direct</span></div>
           <div style={{fontSize: "clamp(20px, 3.4vw, 30px)", fontWeight: 600, letterSpacing: "-0.02em", marginTop: 16}}>
-            +977 <span style={{color:"var(--accent)"}}>9828</span> 733 265
+            WhatsApp
           </div>
           <div style={{marginTop: 'auto', paddingTop: 24, display:'flex', gap:8, flexWrap:"wrap"}}>
-            <a className="btn" href="tel:+9779828733265">↗ Call</a>
-            <a className="btn" href="https://wa.me/9779828733265" target="_blank" rel="noopener">↗ WhatsApp</a>
+            <a className="btn primary" href="https://wa.me/9779828733265" target="_blank" rel="noopener">↗ Open WhatsApp</a>
           </div>
         </Tilt>
       </div>
@@ -577,7 +576,6 @@ const ContactPageV5 = () => (
         <div className="filter-row">
           <a className="filter-pill" href="https://www.linkedin.com/in/sudip-shrestha7675/" target="_blank" rel="noopener">LinkedIn ↗</a>
           <a className="filter-pill" href="mailto:sudeepstha08@gmail.com">Email ↗</a>
-          <a className="filter-pill" href="tel:+9779828733265">Phone ↗</a>
           <a className="filter-pill" href="https://wa.me/9779828733265" target="_blank" rel="noopener">WhatsApp ↗</a>
         </div>
       </div>

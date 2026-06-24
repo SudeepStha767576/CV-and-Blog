@@ -1132,8 +1132,16 @@ const AppV5 = () => {
   React.useEffect(() => { window.scrollTo({top: 0, behavior: "instant"}); }, [page]);
 
   const navigate = (p) => {
-    window.location.hash = p === "home" ? "" : p;
-    setPage(p);
+    if (p.startsWith("post:")) {
+      // Use the clean /posts/{id}/ URL so it shows in the address bar and Google indexes it correctly
+      window.location.href = "/posts/" + p.split(":")[1] + "/";
+    } else if (window.__INITIAL_PAGE__) {
+      // Navigating away from a standalone post page — go back to root
+      window.location.href = p === "home" ? "/" : "/#" + p;
+    } else {
+      window.location.hash = p === "home" ? "" : p;
+      setPage(p);
+    }
   };
   const isPost = page.startsWith("post:");
   const post = isPost ? POSTS_V5.find(p => p.id === page.split(":")[1]) : null;

@@ -1106,8 +1106,8 @@ const AppV5 = () => {
       desc = "Get in touch with Sudip Shrestha, Business Central consultant in the UK. Open to BC technical roles, AL extension work, and UK payroll engagements.";
       canonical = `${SITE}/#contact`;
     } else {
-      title = `${BASE} — BC Consultant · UK Payroll · Semi-Qualified CA`;
-      desc = "Microsoft Dynamics 365 Business Central consultant with UK payroll / HMRC compliance expertise and a chartered accountant's eye for why solutions matter to the business.";
+      title = `${BASE} — Business Central Consultant & AL Developer`;
+      desc = "BC consultant and AL developer at Dogma Group — Dynamics 365 extensions for UK payroll, HMRC compliance, and finance. Semi-qualified chartered accountant.";
       canonical = `${SITE}/`;
     }
     if (!title) return;

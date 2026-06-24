@@ -1100,7 +1100,7 @@ const AppV5 = () => {
     } else if (page === "writing") {
       title = `Writing — ${BASE}`;
       desc = "Technical articles on Microsoft Dynamics 365 Business Central, UK payroll, HMRC compliance, and AL development.";
-      canonical = `${SITE}/#writing`;
+      canonical = `${SITE}/posts/`;
     } else if (page === "contact") {
       title = `Contact — ${BASE}`;
       desc = "Get in touch with Sudip Shrestha, Business Central consultant in the UK. Open to BC technical roles, AL extension work, and UK payroll engagements.";
@@ -1133,10 +1133,10 @@ const AppV5 = () => {
 
   const navigate = (p) => {
     if (p.startsWith("post:")) {
-      // Use the clean /posts/{id}/ URL so it shows in the address bar and Google indexes it correctly
       window.location.href = "/posts/" + p.split(":")[1] + "/";
+    } else if (p === "writing") {
+      window.location.href = "/posts/";
     } else if (window.__INITIAL_PAGE__) {
-      // Navigating away from a standalone post page — go back to root
       window.location.href = p === "home" ? "/" : "/#" + p;
     } else {
       window.location.hash = p === "home" ? "" : p;

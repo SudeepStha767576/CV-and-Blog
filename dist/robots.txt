@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sudeepstha767576.github.io/CV-and-Blog/sitemap.xml

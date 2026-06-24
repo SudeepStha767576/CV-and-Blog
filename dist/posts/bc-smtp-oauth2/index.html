@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="night" data-accent="cyan">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Base href makes all relative asset paths (CSS, JS, images) resolve from the root -->
+  <base href="/" />
+
+  <!-- Post-specific SEO -->
+  <title>Configuring SMTP with OAuth 2.0 in Business Central — Sudip Shrestha</title>
+  <meta name="description" content="End-to-end walkthrough — Azure App Registration, Exchange Online service principal, mailbox-scoped permissions, and BC email account setup. The full chain, no shortcuts." />
+  <meta name="keywords" content="Business Central SMTP OAuth2, BC email configuration, Dynamics 365 SMTP setup, OAuth 2.0 Business Central, Exchange Online Business Central, Azure AD app registration BC, configure email Business Central" />
+  <meta name="author" content="Sudip Shrestha" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://sudipshrestha5767.com.np/posts/bc-smtp-oauth2/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Sudip Shrestha" />
+  <meta property="og:title" content="Configuring SMTP with OAuth 2.0 in Business Central" />
+  <meta property="og:description" content="End-to-end walkthrough — Azure App Registration, Exchange Online service principal, mailbox-scoped permissions, and BC email account setup. The full chain, no shortcuts." />
+  <meta property="og:url" content="https://sudipshrestha5767.com.np/posts/bc-smtp-oauth2/" />
+  <meta property="og:image" content="https://sudipshrestha5767.com.np/assets/sudip-512.jpg" />
+  <meta property="og:image:alt" content="Sudip Shrestha — Business Central Blog" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="article:author" content="Sudip Shrestha" />
+  <meta property="article:published_time" content="2025-10-01" />
+  <meta property="article:section" content="Business Central" />
+  <meta property="article:tag" content="Business Central" />
+  <meta property="article:tag" content="SMTP" />
+  <meta property="article:tag" content="OAuth 2.0" />
+  <meta property="article:tag" content="Exchange Online" />
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Configuring SMTP with OAuth 2.0 in Business Central" />
+  <meta name="twitter:description" content="End-to-end walkthrough — Azure App Registration, Exchange Online service principal, mailbox-scoped permissions, and BC email account setup." />
+  <meta name="twitter:image" content="https://sudipshrestha5767.com.np/assets/sudip-512.jpg" />
+  <meta name="twitter:image:alt" content="Sudip Shrestha" />
+
+  <!-- Theme -->
+  <meta name="theme-color" content="#07090F" />
+
+  <!-- Structured Data: BlogPosting -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": "https://sudipshrestha5767.com.np/posts/bc-smtp-oauth2/",
+    "headline": "Configuring SMTP with OAuth 2.0 in Business Central",
+    "description": "End-to-end walkthrough — Azure App Registration, Exchange Online service principal, mailbox-scoped permissions, and BC email account setup. The full chain, no shortcuts.",
+    "datePublished": "2025-10-01",
+    "dateModified": "2025-10-01",
+    "url": "https://sudipshrestha5767.com.np/posts/bc-smtp-oauth2/",
+    "author": {
+      "@type": "Person",
+      "name": "Sudip Shrestha",
+      "url": "https://sudipshrestha5767.com.np/"
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Sudip Shrestha",
+      "url": "https://sudipshrestha5767.com.np/"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://sudipshrestha5767.com.np/posts/bc-smtp-oauth2/"
+    },
+    "keywords": [
+      "Business Central",
+      "SMTP",
+      "OAuth 2.0",
+      "Email Configuration",
+      "Microsoft Dynamics 365",
+      "Exchange Online",
+      "Azure AD",
+      "AL Development"
+    ],
+    "articleSection": "Business Central",
+    "timeRequired": "PT18M",
+    "inLanguage": "en-GB",
+    "isPartOf": {
+      "@type": "Blog",
+      "name": "Sudip Shrestha · Writing",
+      "url": "https://sudipshrestha5767.com.np/#writing"
+    }
+  }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles-v5.css" />
+
+  <template id="__bundler_thumbnail">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#07090F"/>
+      <circle cx="50" cy="50" r="20" fill="#00E5FF"/>
+      <text x="50" y="56" text-anchor="middle" font-family="system-ui" font-size="14" font-weight="600" fill="#07090F">AM</text>
+    </svg>
+  </template>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Tell the SPA to boot directly on this post -->
+  <script>window.__INITIAL_PAGE__ = "post:bc-smtp-oauth2";</script>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="references-data.js"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="bc-smtp-content.jsx"></script>
+  <script type="text/babel" src="v5-app.jsx"></script>
+</body>
+</html>

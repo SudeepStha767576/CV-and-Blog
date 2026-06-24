@@ -1087,7 +1087,7 @@ const AppV5 = () => {
   // This lets Google index each page/post with its own title and description
   React.useEffect(() => {
     const BASE = "Sudip Shrestha";
-    const SITE = "https://sudeepstha767576.github.io/CV-and-Blog";
+    const SITE = "https://sudipshrestha5767.com.np";
     let title, desc, canonical;
     if (page.startsWith("post:")) {
       const postId = page.split(":")[1];

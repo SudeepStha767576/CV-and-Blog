@@ -1083,6 +1083,44 @@ const AppV5 = () => {
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
 
+  // Update page title, meta description, OG tags, and canonical per route
+  // This lets Google index each page/post with its own title and description
+  React.useEffect(() => {
+    const BASE = "Sudip Shrestha";
+    const SITE = "https://sudipshrestha5767.com.np";
+    let title, desc, canonical;
+    if (page.startsWith("post:")) {
+      const postId = page.split(":")[1];
+      const p = POSTS_V5.find(p => p.id === postId);
+      if (p) {
+        title = `${p.title} — ${BASE}`;
+        desc = p.summary;
+        canonical = `${SITE}/#post:${postId}`;
+      }
+    } else if (page === "writing") {
+      title = `Writing — ${BASE}`;
+      desc = "Technical articles on Microsoft Dynamics 365 Business Central, UK payroll, HMRC compliance, and AL development.";
+      canonical = `${SITE}/#writing`;
+    } else if (page === "contact") {
+      title = `Contact — ${BASE}`;
+      desc = "Get in touch with Sudip Shrestha, Business Central consultant in the UK. Open to BC technical roles, AL extension work, and UK payroll engagements.";
+      canonical = `${SITE}/#contact`;
+    } else {
+      title = `${BASE} — BC Consultant · UK Payroll · Semi-Qualified CA`;
+      desc = "Microsoft Dynamics 365 Business Central consultant with UK payroll / HMRC compliance expertise and a chartered accountant's eye for why solutions matter to the business.";
+      canonical = `${SITE}/`;
+    }
+    if (!title) return;
+    document.title = title;
+    const set = (sel, val) => { const el = document.querySelector(sel); if (el) el.setAttribute("content", val); };
+    set('meta[name="description"]', desc);
+    set('meta[property="og:title"]', title);
+    set('meta[property="og:description"]', desc);
+    set('meta[property="og:url"]', canonical);
+    const canon = document.querySelector('link[rel="canonical"]');
+    if (canon) canon.setAttribute("href", canonical);
+  }, [page]);
+
   const toggleMode = () => {
     const isLight = LIGHT_PALETTES.includes(tweaks.palette);
     if (isLight) {

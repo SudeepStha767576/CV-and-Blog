@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sudipshrestha5767.com.np/sitemap.xml

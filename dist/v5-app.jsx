@@ -236,7 +236,7 @@ const NowWidget = () => (
     <h3 className="now-title">Currently building.</h3>
     <div className="now-list">
       {[
-        { t:"Sirius Payroll integrations & AL extensions",   m:"Dogma Group · live",       p:0.78 },
+        { t:"Qnipay integrations & AL extensions",   m:"Dogma Group · live",       p:0.78 },
         { t:"BC customisations for UK payroll workflows",     m:"HMRC compliance focus",     p:0.55 },
         { t:"UAT · user training · cutover sessions",          m:"Client-facing",              p:0.40 },
         { t:"Translating fit-gap into technical solutions",   m:"Discovery → delivery",      p:0.65 },
@@ -320,7 +320,7 @@ const HomePageV5 = ({ onNav }) => (
             o: "Dogma Group · Hybrid · Kathmandu",
             d: [
               "Architect and ship full AL extension suites across 25+ versioned releases in live multi-client BC environments — Codeunits, Tables, Pages, APIs, Enums, PermissionSets, and RDLC reports with install/upgrade lifecycle management.",
-              "Lead UK statutory payroll engineering within Sirius Payroll × BC — HMRC RTI / FPS / EPS, NI Class 1 / 1A / directors, SMP / SPP / SAP / Alabaster ruling, Student Loan Plans 1–5, BACS file generation, P32 multi-period reporting, and HMRC tax code resolution.",
+              "Lead UK statutory payroll engineering within Qnipay × BC — HMRC RTI / FPS / EPS, NI Class 1 / 1A / directors, SMP / SPP / SAP / Alabaster ruling, Student Loan Plans 1–5, BACS file generation, P32 multi-period reporting, and HMRC tax code resolution.",
               "Design event-driven integration architecture using IntegrationEvent publisher / subscriber patterns, IsHandled guard pattern, and Subscriber + Helper codeunit separation — enabling clean, upgrade-safe extension design.",
               "Build and maintain BC REST API pages with HttpClient, JSON handling, and OAuth token management, integrating with Dataverse-linked entities and CDS integration tables.",
               "Deliver test automation using Subtype=Test codeunits with full BDD structure (SCENARIO / GIVEN / WHEN / THEN), ModalPageHandler, LibraryVariableStorage, RecordRef / FieldRef, and asserterror patterns.",
@@ -332,7 +332,7 @@ const HomePageV5 = ({ onNav }) => (
             t: "Payroll Consultant",
             o: "Dogma Group · On-site",
             d: [
-              "Understanding client business requirements and performing fit-gap analysis against standard Sirius Payroll functionalities.",
+              "Understanding client business requirements and performing fit-gap analysis against standard Qnipay functionalities.",
               "Compiling & documenting requirements and converting them into Blue Prints.",
               "Preparing integration process flows and handing customisation requirements to the technical team.",
               "Close collaboration with the technical team during customisation and testing.",
@@ -345,10 +345,10 @@ const HomePageV5 = ({ onNav }) => (
           },
           {
             p: "Jan 2023 — Aug 2023 · 8 mos",
-            t: "Sirius Payroll Support",
+            t: "Qnipay Support",
             o: "Dogma Group",
             d: [
-              "Case assessment — reviewing newly logged Sirius Payroll cases and determining whether the issue was configurable or technical in nature.",
+              "Case assessment — reviewing newly logged Qnipay cases and determining whether the issue was configurable or technical in nature.",
               "Configurable issues: detailed investigation, escalating to the Senior Payroll Consultant, agreeing on a solution and preparing the client response.",
               "Technical issues: collaborating with Senior Payroll Consultant + Technical Consultant, providing a temporary workaround, then proposing a new workflow during the weekly routine call.",
               "QA team guidance — explaining the new workflow and validating updates with peer review.",
@@ -399,7 +399,7 @@ const HomePageV5 = ({ onNav }) => (
 
           <span className="skill-cat-label">Domain</span>
           {[
-            ["Sirius Payroll","lg"],["UK Payroll / HMRC","lg"],
+            ["Qnipay","lg"],["UK Payroll / HMRC","lg"],
             ["HMRC RTI / FPS",""],["NI / SMP / Alabaster",""],["BACS / P32",""],
             ["Pension Schemes",""],["Timesheet & Budgeting",""],
             ["Finance & GL",""],["Dimensions",""],["Indian GAAP / IFRS",""],

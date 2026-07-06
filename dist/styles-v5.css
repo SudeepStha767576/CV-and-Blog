@@ -846,6 +846,8 @@ img { max-width: 100%; display: block; }
   transition: transform 0.4s var(--ease), border-color 0.3s, box-shadow 0.3s;
   display: flex;
   flex-direction: column;
+  text-decoration: none;
+  color: inherit;
 }
 .post-card:hover {
   transform: translateY(-6px);

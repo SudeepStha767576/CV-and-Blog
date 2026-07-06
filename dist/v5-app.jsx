@@ -255,7 +255,7 @@ const NowWidget = () => (
 
 /* Post card */
 const PostCard = ({ post, onNav }) => (
-  <article className="post-card" onClick={() => onNav("post:" + post.id)}>
+  <a className="post-card" href={"/posts/" + post.id + "/"} onClick={e => { e.preventDefault(); onNav("post:" + post.id); }}>
     <div className="post-cover" style={{"--cover-grad": post.grad}}>
       <span className="cat">{post.category}</span>
       <span className="play">→</span>
@@ -266,7 +266,7 @@ const PostCard = ({ post, onNav }) => (
       <p>{post.summary}</p>
       <div className="ft"><span>{post.date}</span><span>{post.readTime}m read</span></div>
     </div>
-  </article>
+  </a>
 );
 
 /* HOME — also doubles as CV */
@@ -450,7 +450,7 @@ const HomePageV5 = ({ onNav }) => (
           <div>
             <h2 className="section-title">From the <span className="accent">journal</span>.</h2>
           </div>
-          <a className="section-link" onClick={() => onNav("writing")}>View all →</a>
+          <a className="section-link" href="/posts/" onClick={e => { e.preventDefault(); onNav("writing"); }}>View all →</a>
         </div>
       </R>
       <R delay={120}>
@@ -507,7 +507,7 @@ const PostPageV5 = ({ post, onNav }) => {
   const C = 2 * Math.PI * 24;
   return (
     <div className="post-shell page-enter">
-      <a className="post-back" onClick={() => onNav("writing")}>← Journal</a>
+      <a className="post-back" href="/posts/" onClick={e => { e.preventDefault(); onNav("writing"); }}>← Journal</a>
       <R><div className="post-meta-row">
         <span className="cat">{post.category}</span>
         <span>№ {post.no}</span>

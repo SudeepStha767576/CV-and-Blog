@@ -102,7 +102,34 @@
   </template>
 </head>
 <body>
-  <div id="root"></div>
+  <div id="root">
+    <!-- Pre-rendered for Googlebot — replaced by React on load -->
+    <main style="max-width:760px;margin:0 auto;padding:40px 24px;font-family:system-ui,sans-serif;color:#e2e8f0;background:#07090F;">
+      <a href="/posts/" style="color:#00E5FF;text-decoration:none;font-size:14px;">← Blog</a>
+      <div style="margin-top:32px;">
+        <span style="color:#00E5FF;font-size:13px;font-weight:500;">Business Central</span>
+        <h1 style="margin:10px 0 0;font-size:clamp(26px,5vw,40px);font-weight:700;letter-spacing:-0.02em;line-height:1.15;">Configuring SMTP with OAuth 2.0 in Business Central</h1>
+        <p style="color:#64748b;font-size:14px;margin-top:12px;">Sudip Shrestha · 1 Oct 2025 · 18 min read</p>
+      </div>
+      <div style="margin-top:32px;padding:24px;border:1px solid #1e293b;border-radius:12px;background:#0d1117;">
+        <p style="font-size:17px;line-height:1.7;margin:0 0 16px;color:#cbd5e1;">Sending email from Business Central used to mean basic SMTP with a username and password. Microsoft has been deprecating that for years. The replacement — <strong>SMTP AUTH with OAuth 2.0</strong> — works, but only if you stitch together four moving pieces in the right order: an Azure App Registration, an Exchange Online service principal, mailbox-scoped permissions, and the BC email account itself.</p>
+        <p style="font-size:16px;line-height:1.7;margin:0;color:#94a3b8;">This walkthrough is the order I now follow on every new tenant. Eighteen steps across four sections — sign in to Azure, configure Exchange via PowerShell, verify the token, finish in BC.</p>
+      </div>
+      <div style="margin-top:40px;">
+        <h2 style="font-size:20px;font-weight:600;color:#f1f5f9;margin:0 0 8px;">Section 1 — Azure Portal</h2>
+        <p style="color:#94a3b8;font-size:15px;margin:0 0 24px;">Create the App Registration and grant SMTP.SendAsApp permission. Steps 1–5 cover navigating to Azure Active Directory, registering a new application, adding a client secret, and assigning the SMTP.SendAsApp application permission with admin consent.</p>
+        <h2 style="font-size:20px;font-weight:600;color:#f1f5f9;margin:0 0 8px;">Section 2 — Exchange Online</h2>
+        <p style="color:#94a3b8;font-size:15px;margin:0 0 24px;">Connect via PowerShell, create the service principal for your app registration, and scope the SMTP permission to the specific sending mailbox. Steps 6–11 walk through the ExchangeOnlineManagement module, New-ServicePrincipal, and Add-MailboxPermission commands.</p>
+        <h2 style="font-size:20px;font-weight:600;color:#f1f5f9;margin:0 0 8px;">Section 3 — Token Verification</h2>
+        <p style="color:#94a3b8;font-size:15px;margin:0 0 24px;">Before touching Business Central, verify the full OAuth 2.0 token flow works with a direct POST to the Microsoft identity platform token endpoint. Step 12 confirms your tenant ID, client ID, client secret, and scope are all correct.</p>
+        <h2 style="font-size:20px;font-weight:600;color:#f1f5f9;margin:0 0 8px;">Section 4 — Business Central</h2>
+        <p style="color:#94a3b8;font-size:15px;margin:0 0 24px;">Set up the SMTP email account in BC using the OAuth 2.0 credentials. Steps 13–18 cover the Email Accounts page, choosing SMTP as the connector, entering the client credentials, and sending a test email to confirm the full chain is working.</p>
+      </div>
+      <div style="margin-top:40px;padding-top:24px;border-top:1px solid #1e293b;">
+        <p style="color:#64748b;font-size:14px;">By <a href="/" style="color:#00E5FF;text-decoration:none;">Sudip Shrestha</a> — BC consultant and AL developer at Dogma Group.</p>
+      </div>
+    </main>
+  </div>
 
   <!-- Tell the SPA to boot directly on this post -->
   <script>window.__INITIAL_PAGE__ = "post:bc-smtp-oauth2";</script>
